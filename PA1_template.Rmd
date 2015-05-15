@@ -4,10 +4,11 @@ author: "Toni Massó"
 date: "10/05/2015"
 output:
   html_document:
-    pandoc_args: [
-      "+RTS", "-K64m",
-      "-RTS"
-    ]
+    keep_md: yes
+    pandoc_args:
+    - +RTS
+    - -K64m
+    - -RTS
 ---
 
 
@@ -18,7 +19,7 @@ library(scales)
 ```
 ###Loading and preprocessing the data
 
-```{r Load}
+```{r}
 
 data1<-read.csv('data/activity.csv')
 data1$interval <- sapply(data1$interval,FUN=function (i) {  sprintf("%02d:%02d", i %/% 100, i %% 100)})
@@ -122,5 +123,5 @@ p + facet_grid(day ~ .)
 
 
 
-ggplot( data = dataWeekWork, aes(Intervals,x)) + geom_line() + scale_x_datetime( breaks=("120 min"),labels=date_format("%H:%M"))
+
 
