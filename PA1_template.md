@@ -1,10 +1,3 @@
----
-output:
-  html_document:
-    fig_caption: yes
-    keep_md: yes
-    self_contained: no
----
 # Peer Assignment 1
 Toni Massó  
 10/05/2015  
