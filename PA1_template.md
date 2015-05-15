@@ -3,6 +3,7 @@ output:
   html_document:
     fig_caption: yes
     keep_md: yes
+    self_contained: no
 ---
 # Peer Assignment 1
 Toni Massó  
