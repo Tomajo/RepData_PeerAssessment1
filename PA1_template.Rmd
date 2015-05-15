@@ -1,25 +1,126 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
-output: 
+title: "Peer Assignment 1"
+author: "Toni Massó"
+date: "10/05/2015"
+output:
   html_document:
-    keep_md: true
+    pandoc_args: [
+      "+RTS", "-K64m",
+      "-RTS"
+    ]
 ---
 
 
-## Loading and preprocessing the data
+```{r}
+library(dplyr)
+library(ggplot2)
+library(scales)
+```
+###Loading and preprocessing the data
+
+```{r Load}
+
+data1<-read.csv('data/activity.csv')
+data1$interval <- sapply(data1$interval,FUN=function (i) {  sprintf("%02d:%02d", i %/% 100, i %% 100)})
+data1$date2<-paste(data1$date,data1$interval)
+data1$date2<-as.POSIXlt(data1$date2,'%Y-%m-%d %H:%M')
+data0<-data1
+```
+
+###What is mean total number of steps taken per day?
+
+```{r MeanTotalSteps}
+data1<- na.omit(data1)
+data2<-aggregate(data1$steps,by=list(Date=data1$date),FUN=sum)
+colnames(data2)<- c('Date', 'SumStepsPerDay')
+hist(data2$SumStepsPerDay,breaks=seq(0,25000,by=1000))
+```
+
+####Mean per day:
+```{r}
+dataMean<-aggregate(data1$steps,by=list(Date=data1$date),FUN=mean)
+dataMean
+```
+
+####Median per day:
+```{r}
+dataMedian<-aggregate(data1$steps,by=list(Date=data1$date),FUN=median)
+dataMedian
+```
+
+###What is the average daily activity pattern?
+```{r}
+data3<-aggregate(data1$steps,by=list(Interval=data1$interval),FUN=mean,na.rm=TRUE)
+colnames(data3)<- c('Interval','MeanStepsInterval')
+data3$Interval<-strptime(data3$Interval,format='%H:%M')
+ggplot( data = data3, aes(Interval,MeanStepsInterval)) + geom_line() + scale_x_datetime( breaks=("120 min"),labels=date_format("%H:%M"))
+```
+
+####Max Interval 
+```{r}
+data3[data3$MeanStepsInterval== max(data3$MeanStepsInterval),]
+```
+
+###Imputing Missing Values
+```{r}
+sumNASteps<-sum(is.na(data0$steps))
+sumNADate<-sum(is.na(data0$date))
+sumNAInterval<-sum(is.na(data0$interval))
+```
+####NAs in Steps field
+```{r}
+sumNASteps
+```
+####NAs in Date field
+```{r}
+sumNADate
+```
+####NAs in Interval field
+```{r}
+sumNAInterval
+```
+####Filling NA values
+
+I fill NA values with Median value of the interval.
+
+```{r}
+data4<-data1
+for(i in 1:length(data4$steps)){
+        if(is.na(data4$steps[i])){
+                data4$steps[i]<-data3$MeanStepsInterval[substring(as.character(data3$Interval),12,16)==data4$interval[i]]
+        }
+}
+data5<-aggregate(data4$steps,by=list(Date=data4$date),FUN=sum)
+colnames(data5)<- c('Date', 'SumStepsPerDay')
+hist(data5$SumStepsPerDay,breaks=seq(0,25000,by=1000))
+
+```
+
+####Mean per day withou NA:
+```{r}
+dataMean<-aggregate(data4$steps,by=list(Date=data4$date),FUN=mean)
+dataMean
+```
+
+####Median per day withou NA:
+```{r}
+dataMedian<-aggregate(data4$steps,by=list(Date=data4$date),FUN=median)
+dataMedian
+```
+###Are there differences in activity patterns between weekdays and weekends?:
+```{r}
+Sys.setlocale("LC_TIME", "en_US.UTF-8")
+data1$weekday<-weekdays(data1$date2)
+dataWeek<-aggregate(data1$steps,by=list(Weekday=data1$weekday,Intervals=data1$interval),FUN=mean,na.rm=TRUE)
+dataWeek$Intervals<-strptime(dataWeek$Intervals,format='%H:%M')
+ggplot( data = dataWeek, aes(Intervals,x)) + geom_line() + scale_x_datetime( breaks=("120 min"),labels=date_format("%H:%M"))
+dataWeek$day<-'Weekday'
+dataWeek[dataWeek$Weekday=='Saturday'| dataWeek$Weekday=='Sunday','day']<-'Weekend'
+p<-ggplot( data = dataWeek, aes(Intervals,x)) + geom_line() + scale_x_datetime( breaks=("120 min"),labels=date_format("%H:%M")) + scale_y_continuous(name="Number of Steps")
+p + facet_grid(day ~ .)
+```
 
 
 
-## What is mean total number of steps taken per day?
+ggplot( data = dataWeekWork, aes(Intervals,x)) + geom_line() + scale_x_datetime( breaks=("120 min"),labels=date_format("%H:%M"))
 
-
-
-## What is the average daily activity pattern?
-
-
-
-## Imputing missing values
-
-
-
-## Are there differences in activity patterns between weekdays and weekends?
