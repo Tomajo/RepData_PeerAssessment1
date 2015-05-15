@@ -46,7 +46,7 @@ colnames(data2)<- c('Date', 'SumStepsPerDay')
 hist(data2$SumStepsPerDay,breaks=seq(0,25000,by=1000))
 ```
 
-![](PA1_template_files/figure-html/MeanTotalSteps-1.png) 
+![](figure-html/MeanTotalSteps-1.png) 
 
 ####Mean per day:
 
@@ -185,7 +185,7 @@ data3$Interval<-strptime(data3$Interval,format='%H:%M')
 ggplot( data = data3, aes(Interval,MeanStepsInterval)) + geom_line() + scale_x_datetime( breaks=("120 min"),labels=date_format("%H:%M"))
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
+![](figure-html/unnamed-chunk-5-1.png) 
 
 ####Max Interval 
 
@@ -249,7 +249,7 @@ colnames(data5)<- c('Date', 'SumStepsPerDay')
 hist(data5$SumStepsPerDay,breaks=seq(0,25000,by=1000))
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-11-1.png) 
+![](figure-html/unnamed-chunk-11-1.png) 
 
 ####Mean per day withou NA:
 
@@ -395,7 +395,7 @@ dataWeek$Intervals<-strptime(dataWeek$Intervals,format='%H:%M')
 ggplot( data = dataWeek, aes(Intervals,x)) + geom_line() + scale_x_datetime( breaks=("120 min"),labels=date_format("%H:%M"))
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-14-1.png) 
+![](figure-html/unnamed-chunk-14-1.png) 
 
 ```r
 dataWeek$day<-'Weekday'
@@ -404,7 +404,7 @@ p<-ggplot( data = dataWeek, aes(Intervals,x)) + geom_line() + scale_x_datetime( 
 p + facet_grid(day ~ .)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-14-2.png) 
+![](figure-html/unnamed-chunk-14-2.png) 
 
 
 
